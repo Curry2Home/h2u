@@ -1,0 +1,41 @@
+<ion-view style="" class=" " id="page9" title="My Cart">
+    <ion-content class="has-header" padding="true">
+
+
+      <div ng-repeat="item in cart"   >
+
+        <div class="card">
+          <div class="item item-divider">
+            <font color="#f7751f">{{item.item_name}}</font>
+          </div>
+          <div class="item item-text-wrap">
+            <p>{{item.item_qty}} x &#8377; {{item.item_price}} =
+              <strong> &#8377; {{ item.item_qty *  item.item_price  }}</strong>
+            </p>
+            <div class="button-bar" style="box-shadow: none;">
+              <button ng-click="removeFromCart(item.$id)" class="button button-clear button-small icon ion-android-delete" ></button>
+              <button class="button button-clear button-small"></button>
+              <button class="button button-clear button-small"></button>
+              <button class="button button-clear button-small"></button>
+              <button class="button button-clear button-small icon ion-plus-circled" ng-click="inc(item.$id)"></button>
+              <button class="button button-clear button-small">{{item.item_qty}}</button>
+              <button class="button button-clear button-small icon ion-minus-circled" ng-click="dec(item.$id)" ></button>
+            </div>
+
+          </div>
+          <!--div class="item item-divider"-->
+          <!--/div-->
+        </div>
+
+      </div>
+
+      <div>
+        <p>Total ( {{get_qty()}} ) =
+          <strong> &#8377; {{total_amount}}</strong>
+        </p>
+      </div>
+      <button ng-click="checkout()" class="button button-energized button-block ">Check Out</button>
+
+
+    </ion-content>
+</ion-view>

@@ -1,0 +1,27 @@
+<ion-view style="" class=" " id="page7" title="Menu">
+    <ion-content class="has-header" padding="false"  ng-init="loadMenu()"  >
+
+
+
+
+    <div class="">
+      <div class="list card"  ng-repeat="item in menu" >
+        <ion-item class="item item-avatar">
+          <div class="item item-image item-avatar" >
+
+          <img ng-click="showProductInfo(menu[$index].$id)" ng-src="{{'img/fk/'+ menu[$index].image +'.jpg'}}" width="100%" />
+          </div>
+          <a class="item item-icon-right energized" href="#"  style="border-width: 0px; border-style: none;" >
+          <p ng-click="showProductInfo(menu[$index].$id)" style="font-size: 12px;text-align:left;font-size:15px;">
+            {{menu[$index].name}} <br/>
+            <span style="font-weight: bold;color: black; font-size:14px;">&#8377; {{menu[$index].price}}</span>
+          </p>
+          <i style="font-size: 25px; margin-right:0px;right:0px;"  ng-click="addToCart(menu[$index])" class="icon ion-ios-cart"></i>
+        </a>
+      </ion-item>
+    </div>
+</div>
+
+
+</ion-content>
+</ion-view>
