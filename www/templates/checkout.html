@@ -3,42 +3,75 @@
 
     <form name="checkoutForm" class="list " ng-submit="pay(address_choice,pay_choice)" >
 
+<div class="card">
+
+  <div class="item item-text-wrap">
       <!--Address Header-->
       <label ng-click="addManipulation()" class="item item-input  item ic-selected" >
-        <a class="icon icon-right ion-ios-location" style="margin-right: 10px;" ></a>
-        Address
+        <a class="icon icon-right ion-ios-location energized" style="margin-right: 10px;" ></a>
+        Add Address
         <i  class="icon icon-right ion-android-add-circle" style="font-size: larger ;margin-left: 10px;"></i>
       </label>
-
-
       <!-- Address -->
-      <ion-list ng-repeat="item in addresses" >
-          <ion-radio name="addr_group" ng-value="item.$id" ng-model="$parent.address_choice">
-            <a class="icon icon-right ion-ios-location"></a>
+
+          <ion-list ng-repeat="item in addresses" >
+            <ion-radio name="addr_group" ng-value="item.$id" ng-model="$parent.address_choice">
+            <a class="icon icon-right ion-ios-location energized"></a>
             {{item.nickname}} <br/>
             {{item.address}} <br/>
             Pin : {{item.pin}}<br/>
             Phone : {{item.phone}}
           </ion-radio>
       </ion-list>
+    </div>
+  </div>
+
+
+
+      <!--Delivery Option-->
+<div class="list card">
+  <div class="item item-text-wrap">
+      <label ng-click=" " class="item item-input" >
+        <a class="icon icon-right ion-android-car energized" style="margin-right: 10px;" ></a>
+        <div>
+          Standard delivery
+        </div>
+      </label>
+      <select style="width:100%;">
+        <option ng-repeat="item in selectdelivery">{{item.day}} | {{item.Timeslot}}</option>
+      </select>
+    </div>
+</div>
+
+
+
 
 
 
 
       <!--Payment Header-->
-      <label ng-click="addManipulation()" class="item item-input  item ic-selected" >
-        <a class="icon icon-right ion-cash" style="margin-right: 10px;" ></a>
-        Mode of Pay
-      </label>
+
+<div class="card">
+  <div class="item item-header">
+  <label ng-click=" " class="item item-input  item ic-selected" >
+    <a class="icon icon-right ion-cash energized" style="margin-right: 10px;" ></a>
+    Mode of Pay
+  </label>
+</div>
 
 
-      <!-- Payment Options -->
-      <ion-list  ng-repeat="item in payments">
-          <ion-radio name="pay_group" ng-value="item.id" ng-model="$parent.pay_choice" > {{item.name}} </ion-radio>
-      </ion-list>
+  <!-- Payment Options -->
+  <ion-list  ng-repeat="item in payments">
+      <ion-radio name="pay_group" ng-value="item.id" ng-model="$parent.pay_choice" > {{item.name}} </ion-radio>
+  </ion-list>
+
+</div>
 
 
-      <button type="submit" class=" button button-calm  button-block icon-right ion-android-arrow-forward ">
+
+
+
+      <button type="submit" class=" button button-energized  button-block icon-right ion-android-arrow-forward ">
         PAY
       </button>
 

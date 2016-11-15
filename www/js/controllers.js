@@ -259,12 +259,28 @@ angular.module('app.controllers', [])
 
         $scope.get_qty = function() {
           $scope.total_qty=0;
-          $scope.total_amount=0;
+          $scope.total_subamount=0;
+          $scope.delivery_fee=0;
+          $scope.vat_fee=0;
+          $scope.get_discount=0;
+          $scope.total_cost=0;
 
           for (var i = 0; i < sharedCartService.cart_items.length; i++) {
             $scope.total_qty += sharedCartService.cart_items[i].item_qty;
-            $scope.total_amount += (sharedCartService.cart_items[i].item_qty * sharedCartService.cart_items[i].item_price);
+            $scope.total_subamount += (sharedCartService.cart_items[i].item_qty * sharedCartService.cart_items[i].item_price);
           }
+
+          $scope.vat_fee = Math.round($scope.total_subamount * 0.145);
+//delivery fee condition need to parametrized and update in future.
+          if ($scope.total_subamount > 150){
+            $scope.delivery_fee = 0;
+          }
+          else {
+            $scope.delivery_fee = 20;
+          }
+
+//discount calculation need to be done.
+          $scope.total_cost = ($scope.total_subamount + $scope.vat_fee + $scope.delivery_fee - $scope.get_discount);
           return $scope.total_qty;
         };
       }
@@ -381,10 +397,10 @@ angular.module('app.controllers', [])
         subTitle: sub_title,
         scope: $scope,
         buttons: [
-          { text: 'Close' },
+          { text: 'Cancel' },
           {
             text: '<b>Save</b>',
-            type: 'button-positive',
+            type: 'button-energized',
             onTap: function(e) {
               if (!$scope.data.nickname || !$scope.data.address || !$scope.data.pin || !$scope.data.phone ) {
                 e.preventDefault(); //don't allow the user to close unless he enters full details
@@ -400,7 +416,7 @@ angular.module('app.controllers', [])
 
         if(edit_val!=null) {
           //Update  address
-          if(res!=null){ // res ==null  => close 
+          if(res!=null){ // res ==null  => close
             fireBaseData.refUser().child($scope.user_info.uid).child("address").child(edit_val.$id).update({    // set
               nickname: res.nickname,
               address: res.address,
@@ -500,6 +516,17 @@ angular.module('app.controllers', [])
         $scope.user_info=user;
       }
     });
+    var Today=new Date();
+    var tommorow=new Date();
+    var current_date = Today.getDate()+"-"+(Today.getMonth()+1)+"-"+Today.getFullYear();
+    tommorow.setDate(tommorow.getDate() + 1);
+    var tommorow_date = (tommorow.getDate())+"-"+(tommorow.getMonth()+1)+"-"+tommorow.getFullYear();
+    $scope.selectdelivery = [
+      {day: current_date, Timeslot: '10:00 AM-12:00 PM'},
+      {day: current_date, Timeslot: '07:00 PM-09:00 PM'},
+      {day: tommorow_date, Timeslot: '10:00 AM-12:00 PM'},
+      {day: tommorow_date, Timeslot: '07:00 PM-09:00 PM'}
+    ];
 
     $scope.payments = [
       {id: 'CREDIT', name: 'Credit Card'},
@@ -533,7 +560,7 @@ angular.module('app.controllers', [])
             user_name:$scope.user_info.displayName,
             address_id: address,
             payment_id: payment,
-            status: "Queued"
+            status: "Processing"
           });
 
         }
@@ -567,7 +594,7 @@ angular.module('app.controllers', [])
         var sub_title="Add your new address";
       }
       // An elaborate, custom popup
-      var addressPopup = $ionicPopup.show({
+      var addressPospup = $ionicPopup.show({
         template: '<input type="text"   placeholder="Nick Name"  ng-model="data.nickname"> <br/> ' +
         '<input type="text"   placeholder="Address" ng-model="data.address"> <br/> ' +
         '<input type="number" placeholder="Pincode" ng-model="data.pin"> <br/> ' +
@@ -576,10 +603,10 @@ angular.module('app.controllers', [])
         subTitle: sub_title,
         scope: $scope,
         buttons: [
-          { text: 'Close' },
+          { text: '<font size=1.8>Cancel</font>'},
           {
-            text: '<b>Save</b>',
-            type: 'button-positive',
+            text: '<font size=1.8>Save</font>',
+            type: 'button-energized',
             onTap: function(e) {
               if (!$scope.data.nickname || !$scope.data.address || !$scope.data.pin || !$scope.data.phone ) {
                 e.preventDefault(); //don't allow the user to close unless he enters full details
@@ -614,7 +641,4 @@ angular.module('app.controllers', [])
       });
 
     };
-
-
   })
-

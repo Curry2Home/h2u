@@ -29,13 +29,37 @@
 
       </div>
 
-      <div>
-        <p>Total ( {{get_qty()}} ) =
-          <strong> &#8377; {{total_amount}}</strong>
-        </p>
-      </div>
+
+      <ion-item class="item" style="white-space: normal;">
+        <div>
+          <div class="row">
+            <div class="col">Sub Total ( {{get_qty()}} ) </div>
+            <div class="col" align="right">  <strong> &#8377;{{total_subamount}}</strong></div>
+          </div>
+
+          <div class="row">
+            <div class="col">Discount </div>
+            <div class="col" align="right">  <strong> &#8377;{{get_discount}}</strong></div>
+          </div>
+
+          <div class="row">
+            <div class="col">Delivery fee   </div>
+            <div class="col" align="right">  <strong> &#8377;{{delivery_fee}}</strong></div>
+          </div>
+
+          <div class="row">
+            <div class="col">+VAT  </div>
+            <div class="col" align="right">  <strong> &#8377;{{vat_fee}}</strong></div>
+          </div>
+
+          <div class="row">
+            <div class="col"><h2>Total</h2> </div>
+            <div class="col" align="right">  <h1>&#8377;{{total_cost}}</h1></div>
+          </div>
+
+        </div>
+      </ion-item>
+
       <button ng-click="checkout()" class="button button-energized button-block ">Check Out</button>
-
-
     </ion-content>
 </ion-view>
