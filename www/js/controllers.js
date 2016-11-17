@@ -12,9 +12,6 @@ angular.module('app.controllers', [])
       }
     });
 
-
-
-
     //Check if user already logged in
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
@@ -264,7 +261,7 @@ angular.module('app.controllers', [])
           $scope.vat_fee=0;
           $scope.get_discount=0;
           $scope.total_cost=0;
-
+          //$rootScope.total_checkout_cost=0;
           for (var i = 0; i < sharedCartService.cart_items.length; i++) {
             $scope.total_qty += sharedCartService.cart_items[i].item_qty;
             $scope.total_subamount += (sharedCartService.cart_items[i].item_qty * sharedCartService.cart_items[i].item_price);
@@ -281,6 +278,8 @@ angular.module('app.controllers', [])
 
 //discount calculation need to be done.
           $scope.total_cost = ($scope.total_subamount + $scope.vat_fee + $scope.delivery_fee - $scope.get_discount);
+//$rootScope.total_checkout_cost=$scope.total_cost;
+//console.log($rootScope.total_checkout_cost);
           return $scope.total_qty;
         };
       }
@@ -387,7 +386,7 @@ angular.module('app.controllers', [])
         var title="Add Address";
         var sub_title="Add your new address";
       }
-      // An elaborate, custom popup
+      // Sujeet An elaborate, custom popup
       var addressPopup = $ionicPopup.show({
         template: '<input type="text"   placeholder="Nick Name"  ng-model="data.nickname"> <br/> ' +
                   '<input type="text"   placeholder="Address" ng-model="data.address"> <br/> ' +
@@ -512,27 +511,55 @@ angular.module('app.controllers', [])
     //Check if user already logged in
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
+        //================
+        $scope.cart=sharedCartService.cart_items;  // Loads users cart
+
+        $scope.get_total = function() {
+          $scope.total_qty=0;
+          $scope.total_subamount=0;
+          $scope.delivery_fee=0;
+          $scope.vat_fee=0;
+          $scope.get_discount=0;
+          $scope.total_cost=0;
+          //$rootScope.total_checkout_cost=0;
+          for (var i = 0; i < sharedCartService.cart_items.length; i++)
+          {
+            $scope.total_qty += sharedCartService.cart_items[i].item_qty;
+            $scope.total_subamount += (sharedCartService.cart_items[i].item_qty * sharedCartService.cart_items[i].item_price);
+          }
+          $scope.vat_fee = Math.round($scope.total_subamount * 0.145);
+//delivery fee condition need to parametrized and update in future.
+          if ($scope.total_subamount > 150){
+            $scope.delivery_fee = 0;
+          }
+          else {
+            $scope.delivery_fee = 20;
+          }
+
+//discount calculation need to be done.
+          $scope.total_cost = ($scope.total_subamount + $scope.vat_fee + $scope.delivery_fee - $scope.get_discount);
+
+          return $scope.total_cost;
+        }
+        //===============
         $scope.addresses= $firebaseArray( fireBaseData.refUser().child(user.uid).child("address") );
         $scope.user_info=user;
+
       }
+
     });
-    var Today=new Date();
-    var tommorow=new Date();
-    var current_date = Today.getDate()+"-"+(Today.getMonth()+1)+"-"+Today.getFullYear();
-    tommorow.setDate(tommorow.getDate() + 1);
-    var tommorow_date = (tommorow.getDate())+"-"+(tommorow.getMonth()+1)+"-"+tommorow.getFullYear();
-    $scope.selectdelivery = [
-      {day: current_date, Timeslot: '10:00 AM-12:00 PM'},
-      {day: current_date, Timeslot: '07:00 PM-09:00 PM'},
-      {day: tommorow_date, Timeslot: '10:00 AM-12:00 PM'},
-      {day: tommorow_date, Timeslot: '07:00 PM-09:00 PM'}
-    ];
+
 
     $scope.payments = [
       {id: 'CREDIT', name: 'Credit Card'},
       {id: 'NETBANK', name: 'Net Banking'},
-      {id: 'COD', name: 'COD'}
+      {id: 'COD', name: 'Cash On Delivery'},
+      {id: 'PAYTM', name: 'Paytm'}
     ];
+//===========get total cost =======
+
+//===========exit total cost ======
+
 
     $scope.pay=function(address,payment){
 
@@ -577,9 +604,62 @@ angular.module('app.controllers', [])
         $state.go('lastOrders', {}, {location: "replace", reload: true});
       }
     }
+//=======delivery slot start======
+$scope.deliverySlot = function(slot_value)
+{
+  var Today=new Date();
+  var tommorow=new Date();
+  var current_date = Today.getDate()+"-"+(Today.getMonth()+1)+"-"+Today.getFullYear();
+  tommorow.setDate(tommorow.getDate() + 1);
+  var tommorow_date = (tommorow.getDate())+"-"+(tommorow.getMonth()+1)+"-"+tommorow.getFullYear();
+  $scope.data={};
+  $scope.slot={};
+  $scope.selectdelivery= [
+    {day: current_date, Timeslot: '10:00 AM-12:00 PM'},
+    {day: current_date, Timeslot: '07:00 PM-09:00 PM'},
+    {day: tommorow_date, Timeslot: '10:00 AM-12:00 PM'},
+    {day: tommorow_date, Timeslot: '07:00 PM-09:00 PM'}
+  ];
+
+  var slotPopup = $ionicPopup.show({
+    title: 'Choose Slot',
+    scope: $scope,
+    template: '<ion-list>' +
+              '<ion-radio ng-repeat="item in selectdelivery" ng-value="item" ng-model="data.slot_id">' +
+              '<p style="font-size:10px;">{{item.day}}|{{item.Timeslot}}</p>'+
+              '</ion-radio>'+
+              '<ion-list>',
+    buttons:
+    [
+      { text: 'No' , type: 'button-stable' },
+      { text: 'Yes', type: 'button-energized' ,
+        onTap:
+          function(e)
+          {
+            //console.log($scope.data.slot_id.day +"|"+ $scope.data.slot_id.Timeslot);
+            $scope.slot =[{day:$scope.data.slot_id.day,Timeslot:$scope.data.slot_id.Timeslot}];
+            //console.log($scope.slot);
+            //return $scope.slot;
+          }
+        }
+    ]
+  });
+
+  slotPopup.then(function(res) {
+    if(res)
+    {
+        //return value from here....
+        $scope.slot;
+    }
 
 
 
+  });
+};
+
+//=======delivery slot end========
+
+//=======Address change for checkout page ========//
     $scope.addManipulation = function(edit_val) {  // Takes care of address add and edit ie Address Manipulator
 
 
@@ -594,7 +674,7 @@ angular.module('app.controllers', [])
         var sub_title="Add your new address";
       }
       // An elaborate, custom popup
-      var addressPospup = $ionicPopup.show({
+      var addressPopup = $ionicPopup.show({
         template: '<input type="text"   placeholder="Nick Name"  ng-model="data.nickname"> <br/> ' +
         '<input type="text"   placeholder="Address" ng-model="data.address"> <br/> ' +
         '<input type="number" placeholder="Pincode" ng-model="data.pin"> <br/> ' +
